@@ -149,3 +149,6 @@ doc/api/
 *.js.map
 .flutter-plugins
 .flutter-plugins-dependencies
+node_modules
+node_modules/*
+node_modules/**

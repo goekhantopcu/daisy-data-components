@@ -16,8 +16,7 @@ In addition to its ease-of-use, "daisy-data-components" is also highly customiza
 libraries, all of the components included in this package can be customized to fit your specific needs. This means that
 you can develop your own components to create a truly unique data visualization experience for your users.
 
-It's worth noting that "daisy-data-components" has already been adopted by
-the <span style="color:#E20074; font-weight: bold">Deutsche Telekom Technik GmbH</span>, a testament
+It's worth noting that "daisy-data-components" has already been adopted by some of my projects at work, a testament
 to its quality and reliability. With built-in pagination, sorting, and search functionality, this package is the perfect
 solution for developers looking to enhance their data visualization capabilities.
 

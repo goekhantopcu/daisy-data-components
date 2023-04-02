@@ -14,13 +14,17 @@
       </tr>
       </thead>
 
-      <tbody v-if="tableOptions.isDataLoading">
-      <slot name="body-loading"/>
+      <tbody v-if="tableOptions.isDataLoading" class="dd-table-body-loading">
+      <tr class="dd-table-body-loading-row">
+        <td :colspan="tableOptions.columns.length" class="dd-table-body-loading-column">
+          <slot name="body-loading"/>
+        </td>
+      </tr>
       </tbody>
 
-      <tbody v-else-if="filteredItems.length === 0">
-      <tr class="dd-table-body-row">
-        <td :colspan="tableOptions.columns.length" class="dd-table-body-column">
+      <tbody v-else-if="filteredItems.length === 0" class="dd-table-body-no-data">
+      <tr class="dd-table-body-no-data-row">
+        <td :colspan="tableOptions.columns.length" class="dd-table-body-no-data-column">
           <slot name="body-no-data"/>
         </td>
       </tr>
@@ -87,30 +91,23 @@ watch(
   @apply table w-full
 }
 
-.dd-table-head {
-}
+.dd-table-head {}
+.dd-table-head-row {}
+.dd-table-head-column {}
 
-.dd-table-head-row {
-}
+.dd-table-body {}
+.dd-table-body-row {}
+.dd-table-body-column {}
 
-.dd-table-head-column {
-}
+.dd-table-body-loading {}
+.dd-table-body-loading-column {}
+.dd-table-body-loading-row {}
 
-.dd-table-body {
-}
+.dd-table-body-no-data {}
+.dd-table-body-no-data-row {}
+.dd-table-body-no-data-column {}
 
-.dd-table-body-row {
-}
-
-.dd-table-body-column {
-}
-
-.dd-table-foot {
-}
-
-.dd-table-foot-row {
-}
-
-.dd-table-foot-column {
-}
+.dd-table-foot {}
+.dd-table-foot-row {}
+.dd-table-foot-column {}
 </style>

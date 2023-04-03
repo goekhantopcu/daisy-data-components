@@ -8,7 +8,7 @@
             class="dd-table-head-column"
             :class="generateClass('dd-table-head-column', index)"
             @click="sortColumn(column)">
-          <slot name="column" :column="column" :index="index"/>
+          <slot name="column" :column="column" :index="index" :pageChange="pageChange"/>
         </th>
       </tr>
       </thead>
@@ -38,7 +38,7 @@
             :key="index"
             class="dd-table-body-column"
             :class="generateClass('dd-table-body-column', index)">
-          <slot :name="column.slot" :item="item" :index="index" :column="column"/>
+          <slot :name="column.slot" :item="item" :index="index" :column="column" :pageChange="pageChange" />
         </td>
       </tr>
       </tbody>
@@ -46,7 +46,7 @@
       <tfoot class="dd-table-foot">
       <tr class="dd-table-foot-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-foot-column">
-          <slot name="foot" :pages="pages" :page="page"/>
+          <slot name="foot" :pages="pages" :page="page" :pageChange="pageChange"/>
         </td>
       </tr>
       </tfoot>
@@ -71,6 +71,29 @@ const sortColumn = (column: DataTableColumn<any>) => {
 
 const pages = computed(() => paginate(filteredItems.value, tableOptions.value))
 const page = computed(() => pages.value[tableOptions.value.pageCurrentId])
+
+interface PageChangeResult {
+  fromPageId: number;
+  toPageId: number;
+  offset: number;
+}
+
+const pageChange = (offset: number): PageChangeResult => {
+  const fromPageId = tableOptions.value.pageCurrentId
+  let toPageId = tableOptions.value.pageCurrentId + offset
+  if (toPageId >= pages.value.length) {
+    toPageId = pages.value.length - 1;
+  }
+  if (toPageId <= 0) {
+    toPageId = 0;
+  }
+  tableOptions.value.pageCurrentId = toPageId
+  return {
+    fromPageId: fromPageId,
+    toPageId: toPageId,
+    offset: offset
+  }
+}
 
 const generateClass = (base: string, index: number): string => `${base}-${index}`
 

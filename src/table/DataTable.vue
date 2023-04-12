@@ -70,7 +70,7 @@ const sortColumn = (column: DataTableColumn<any>) => {
 }
 
 const pages = computed(() => paginate(filteredItems.value, tableOptions.value))
-const page = computed(() => pages.value[tableOptions.value.pageCurrentId])
+const page = computed(() => pages.value[tableOptions.value.pageCurrentId ?? 0])
 
 interface PageChangeResult {
   fromPageId: number;
@@ -79,8 +79,8 @@ interface PageChangeResult {
 }
 
 const pageChange = (offset: number): PageChangeResult => {
-  const fromPageId = tableOptions.value.pageCurrentId
-  let toPageId = tableOptions.value.pageCurrentId + offset
+  const fromPageId = tableOptions.value.pageCurrentId ?? 0
+  let toPageId = fromPageId + offset
   if (toPageId >= pages.value.length) {
     toPageId = pages.value.length - 1;
   }

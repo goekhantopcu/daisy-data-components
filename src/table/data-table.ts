@@ -8,11 +8,11 @@ export interface DataTableColumn<T> {
 
 export interface DataTableOptions<T> {
     enableSearch: boolean;
-    searchQuery: string;
-    minSearchQueryLength: number;
+    searchQuery?: string;
+    minSearchQueryLength?: number;
     enablePagination: boolean;
-    pageSize: number;
-    pageCurrentId: number;
+    pageSize?: number;
+    pageCurrentId?: number;
     isDataLoading: boolean
     columns: DataTableColumn<T>[]
     items: T[]
@@ -24,7 +24,8 @@ export const search = (options: DataTableOptions<any>): any[] => {
         return options.items
     }
     const searchQuery = options.searchQuery
-    if (searchQuery.trim().length === 0 || searchQuery.trim().length < options.minSearchQueryLength) {
+    const minSearchQueryLength = options.minSearchQueryLength ?? -1
+    if (!searchQuery || searchQuery.trim().length === 0 || searchQuery.trim().length < minSearchQueryLength) {
         return options.items
     }
     const columns = options.columns.filter(column => column.searchable)
@@ -77,7 +78,7 @@ export const paginate = <T>(items: any[], options: DataTableOptions<T>): Paginat
         ]
     }
     let {pageSize} = options;
-    if (pageSize > items.length || pageSize < 0) {
+    if (!pageSize || pageSize > items.length || pageSize < 0) {
         pageSize = items.length
     }
     const totalPages = Math.ceil(items.length / pageSize);

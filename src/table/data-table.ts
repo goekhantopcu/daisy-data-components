@@ -13,7 +13,9 @@ export interface DataTableOptions<T> {
     enablePagination: boolean;
     pageSize?: number;
     pageCurrentId?: number;
-    isDataLoading: boolean
+    loading: boolean;
+    showLoadingBody?: boolean;
+    showNoDataBody?: boolean;
     columns: DataTableColumn<T>[]
     items: T[]
 }

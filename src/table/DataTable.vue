@@ -13,7 +13,7 @@
       </tr>
       </thead>
 
-      <tbody v-if="tableOptions.isDataLoading" class="dd-table-body-loading">
+      <tbody v-if="tableOptions.loading && tableOptions.showLoadingBody" class="dd-table-body-loading">
       <tr class="dd-table-body-loading-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-loading-column">
           <slot name="loading"/>
@@ -21,7 +21,7 @@
       </tr>
       </tbody>
 
-      <tbody v-else-if="filteredItems.length === 0" class="dd-table-body-no-data">
+      <tbody v-if="filteredItems.length === 0 && tableOptions.showNoDataBody" class="dd-table-body-no-data">
       <tr class="dd-table-body-no-data-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-no-data-column">
           <slot name="no-data"/>

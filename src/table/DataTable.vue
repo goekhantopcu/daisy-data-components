@@ -8,12 +8,19 @@
             class="dd-table-head-column"
             :class="generateClass('dd-table-head-column', index)"
             @click="sortColumn(column)">
-          <slot name="column" :column="column" :index="index" :pageChange="pageChange"/>
+          <slot v-if="$slots.hasOwnProperty('column')" name="column" :column="column" :index="index" :pageChange="pageChange"/>
+          <template v-else>
+            <div v-if="column.sortable" class="flex gap-3 items-center">
+              <span class="underline">{{ column.title }}</span>
+              <svg class="h-3.5 fill-neutral-content" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8H32c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128zm0 429.3l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128c-12.5 12.5-32.8 12.5-45.3 0z"/></svg>
+            </div>
+            <span v-else>{{ column.title }}</span>
+          </template>
         </th>
       </tr>
       </thead>
 
-      <tbody v-if="tableOptions.loading && tableOptions.showLoadingBody" class="dd-table-body-loading">
+      <tbody v-if="tableOptions.loading" class="dd-table-body-loading">
       <tr class="dd-table-body-loading-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-loading-column">
           <slot name="loading"/>
@@ -21,7 +28,7 @@
       </tr>
       </tbody>
 
-      <tbody v-if="filteredItems.length === 0 && tableOptions.showNoDataBody" class="dd-table-body-no-data">
+      <tbody v-else-if="filteredItems.length === 0" class="dd-table-body-no-data">
       <tr class="dd-table-body-no-data-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-no-data-column">
           <slot name="no-data"/>
@@ -43,7 +50,7 @@
       </tr>
       </tbody>
 
-      <tfoot class="dd-table-foot">
+      <tfoot v-if="$slots.hasOwnProperty('foot')" class="dd-table-foot">
       <tr class="dd-table-foot-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-foot-column">
           <slot name="foot" :pages="pages" :page="page" :pageChange="pageChange"/>

@@ -1,9 +1,10 @@
 export interface DataTableColumn<T> {
     slot: string;
     title: string;
-    sortable: boolean;
-    searchable: boolean;
-    queryPredicate: (data: T) => string;
+    sortable?: boolean;
+    searchable?: boolean;
+    queryPredicate?: (data: T) => string;
+    classes?: string;
 }
 
 export interface DataTableOptions<T> {
@@ -28,25 +29,27 @@ export const search = (options: DataTableOptions<any>): any[] => {
     if (!searchQuery || searchQuery.trim().length === 0 || searchQuery.trim().length < minSearchQueryLength) {
         return options.items
     }
-    const columns = options.columns.filter(column => column.searchable)
+    const columns = options.columns
+        .filter(column => column.searchable)
+        .filter(column => column.queryPredicate !== undefined)
     if (columns.length === 0) {
         return options.items
     }
     return options.items.filter((item: any) => {
-        return columns.some(column => wildcardIncludes(column.queryPredicate(item), searchQuery))
+        return columns.some(column => wildcardIncludes(column.queryPredicate!(item), searchQuery))
     });
 }
 
 // Sort
 const sortCache = new Map<string, boolean>()
 export const sort = (items: any[], column: DataTableColumn<any>): any[] => {
-    if (!column.sortable) {
+    if (!column.sortable || column.queryPredicate === undefined) {
         return items
     }
     const ascending = !(sortCache.get(column.slot) ?? false)
     const sortedItems = items.sort((a: any, b: any) => {
-        const resultA = column.queryPredicate(a)
-        const resultB = column.queryPredicate(b)
+        const resultA = column.queryPredicate!(a)
+        const resultB = column.queryPredicate!(b)
         if (ascending) {
             return resultA.localeCompare(resultB)
         }

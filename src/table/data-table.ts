@@ -1,37 +1,9 @@
-export interface DataTableColumn<T> {
-    slot: string;
-    title: string;
-    sortable?: boolean;
-    searchable?: boolean;
-    queryPredicate?: (data: T) => string;
-    classes?: string;
-}
+import {wildcardIncludes} from "./wildcard";
+import {comparison} from "./comparison";
+import {paginate, PaginationResult} from "./pagination";
+import {DataTableColumn, DataTableOptions} from "./types";
 
-export interface DataTableStyling {
-    wrapper?: string;
-    table?: string;
-    head?: string;
-    bodyLoading?: string;
-    bodyNoData?: string;
-    body?: string;
-    foot?: string;
-}
-
-export interface DataTableOptions<T> {
-    enableSearch: boolean;
-    searchQuery?: string;
-    minSearchQueryLength?: number;
-    enablePagination: boolean;
-    pageSize?: number;
-    pageCurrentId?: number;
-    loading: boolean;
-    styling?: DataTableStyling
-    columns: DataTableColumn<T>[]
-    items: T[]
-}
-
-// Search
-export const search = (options: DataTableOptions<any>): any[] => {
+export const tableSearch = (options: DataTableOptions<any>): any[] => {
     if (!options.enableSearch) {
         return options.items
     }
@@ -47,39 +19,33 @@ export const search = (options: DataTableOptions<any>): any[] => {
         return options.items
     }
     return options.items.filter((item: any) => {
-        return columns.some(column => wildcardIncludes(column.queryPredicate!(item), searchQuery))
+        return columns.some(column => {
+            const query = column.queryPredicate!(item)
+            if (!query) {
+                return false
+            }
+            return wildcardIncludes(query.toString(), searchQuery)
+        })
     });
 }
 
-// Sort
-const sortCache = new Map<string, boolean>()
-export const sort = (items: any[], column: DataTableColumn<any>): any[] => {
+const tableSortCache = new Map<string, boolean>()
+export const tableSort = (items: any[], column: DataTableColumn<any>): any[] => {
     if (!column.sortable || column.queryPredicate === undefined) {
         return items
     }
-    const ascending = !(sortCache.get(column.slot) ?? false)
+    const ascending = !(tableSortCache.get(column.slot) ?? false)
     const sortedItems = items.sort((a: any, b: any) => {
-        const resultA = column.queryPredicate!(a)
-        const resultB = column.queryPredicate!(b)
         if (ascending) {
-            return resultA.localeCompare(resultB)
+            return comparison(column.queryPredicate!(a), column.queryPredicate!(b))
         }
-        return resultB.localeCompare(resultA)
+        return comparison(column.queryPredicate!(b), column.queryPredicate!(a))
     })
-    sortCache.set(column.slot, ascending)
+    tableSortCache.set(column.slot, ascending)
     return sortedItems
 }
 
-// Pagination
-export interface PaginationResult<T> {
-    data: T[];
-    currentPage: number;
-    totalItems: number;
-    totalAbsoluteItems: number;
-    totalPages: number;
-}
-
-export const paginate = <T>(items: any[], options: DataTableOptions<T>): PaginationResult<T>[] => {
+export const tablePagination = <T>(items: any[], options: DataTableOptions<T>): PaginationResult<T>[] => {
     if (!options.enablePagination) {
         return [
             {
@@ -91,47 +57,5 @@ export const paginate = <T>(items: any[], options: DataTableOptions<T>): Paginat
             }
         ]
     }
-    let {pageSize} = options;
-    if (!pageSize || pageSize > items.length || pageSize < 0) {
-        pageSize = items.length
-    }
-    const totalPages = Math.ceil(items.length / pageSize);
-    const result: PaginationResult<T>[] = [];
-    for (let i = 1; i <= totalPages; i++) {
-        const startIndex = (i - 1) * pageSize;
-        const endIndex = i * pageSize;
-        const paginatedData = items.slice(startIndex, endIndex);
-        const paginationResult: PaginationResult<T> = {
-            data: paginatedData,
-            currentPage: i - 1,
-            totalItems: paginatedData.length,
-            totalAbsoluteItems: items.length,
-            totalPages: totalPages
-        };
-        result.push(paginationResult);
-    }
-    return result;
+    return paginate(items, options.pageSize ?? -1)
 }
-
-// Utility-Functions
-const wildcardIncludes = (base: string, searchQuery: string) => {
-    base = base.toLowerCase()
-    searchQuery = searchQuery.toLowerCase()
-    if (searchQuery === '') {
-        return true
-    }
-    if (searchQuery.startsWith('%') && searchQuery.endsWith('%')) {
-        const withoutWildcard = searchQuery.slice(1).slice(0, -1)
-        return base.includes(withoutWildcard)
-    }
-    if (searchQuery.startsWith('%')) {
-        const withoutWildcard = searchQuery.slice(1);
-        return base.endsWith(withoutWildcard);
-    }
-    if (searchQuery.endsWith('%')) {
-        const withoutWildcard = searchQuery.slice(0, -1);
-        return base.startsWith(withoutWildcard);
-    }
-    return base.includes(searchQuery);
-}
-

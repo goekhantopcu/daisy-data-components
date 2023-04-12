@@ -61,8 +61,8 @@
 
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
-import {paginate, search, sort} from "./data-table";
-import type {DataTableColumn, DataTableOptions} from "./data-table";
+import {tablePagination, tableSearch, tableSort} from "./data-table";
+import type {DataTableColumn, DataTableOptions} from "./types";
 
 const props = defineProps<{ options: DataTableOptions<any> }>()
 
@@ -71,10 +71,10 @@ const tableOptions = ref<DataTableOptions<any>>(props.options)
 const filteredItems = ref<any[]>(tableOptions.value.items)
 
 const sortColumn = (column: DataTableColumn<any>) => {
-  filteredItems.value = sort(filteredItems.value, column)
+  filteredItems.value = tableSort(filteredItems.value, column)
 }
 
-const pages = computed(() => paginate(filteredItems.value, tableOptions.value))
+const pages = computed(() => tablePagination(filteredItems.value, tableOptions.value))
 const page = computed(() => pages.value[tableOptions.value.pageCurrentId ?? 0])
 
 interface PageChangeResult {
@@ -105,7 +105,7 @@ const generateClass = (base: string, index: number): string => `${base}-${index}
 watch(() => props.options,
     (options: DataTableOptions<any>) => {
       tableOptions.value = options
-      filteredItems.value = search(options)
+      filteredItems.value = tableSearch(options)
     },
     {immediate: true, deep: true}
 )

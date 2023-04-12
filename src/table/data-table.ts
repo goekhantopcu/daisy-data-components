@@ -7,6 +7,16 @@ export interface DataTableColumn<T> {
     classes?: string;
 }
 
+export interface DataTableStyling {
+    wrapper?: string;
+    table?: string;
+    head?: string;
+    bodyLoading?: string;
+    bodyNoData?: string;
+    body?: string;
+    foot?: string;
+}
+
 export interface DataTableOptions<T> {
     enableSearch: boolean;
     searchQuery?: string;
@@ -15,6 +25,7 @@ export interface DataTableOptions<T> {
     pageSize?: number;
     pageCurrentId?: number;
     loading: boolean;
+    styling?: DataTableStyling
     columns: DataTableColumn<T>[]
     items: T[]
 }

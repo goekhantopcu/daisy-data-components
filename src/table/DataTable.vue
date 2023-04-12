@@ -1,7 +1,7 @@
 <template>
-  <div class="dd-table-parent">
-    <table class="dd-table">
-      <thead class="dd-table-head">
+  <div class="overflow-x-auto" :class="tableOptions.styling?.wrapper">
+    <table class="table w-full" :class="tableOptions.styling?.table">
+      <thead :class="tableOptions.styling?.head">
       <tr class="dd-table-head-row">
         <th v-for="(column, index) in tableOptions.columns"
             :key="index"
@@ -20,7 +20,7 @@
       </tr>
       </thead>
 
-      <tbody v-if="tableOptions.loading" class="dd-table-body-loading">
+      <tbody v-if="tableOptions.loading" :class="tableOptions.styling?.bodyLoading">
       <tr class="dd-table-body-loading-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-loading-column">
           <slot name="loading"/>
@@ -28,7 +28,7 @@
       </tr>
       </tbody>
 
-      <tbody v-else-if="filteredItems.length === 0" class="dd-table-body-no-data">
+      <tbody v-else-if="filteredItems.length === 0" :class="tableOptions.styling?.bodyNoData">
       <tr class="dd-table-body-no-data-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-no-data-column">
           <slot name="no-data"/>
@@ -36,22 +36,20 @@
       </tr>
       </tbody>
 
-      <tbody v-else class="dd-table-body">
+      <tbody v-else :class="tableOptions.styling?.body">
       <tr v-for="(item, index) in page.data"
           :key="index"
-          class="dd-table-body-row"
           :class="generateClass('dd-table-body-row', index)">
         <td v-for="(column, index) in tableOptions.columns"
             :key="index"
-            class="dd-table-body-column"
-            :class="generateClass('dd-table-body-column', index)">
+            :class="column.classes">
           <slot :name="column.slot" :item="item" :index="index" :column="column" :pageChange="pageChange" />
         </td>
       </tr>
       </tbody>
 
       <tfoot v-if="$slots.hasOwnProperty('foot')" class="dd-table-foot">
-      <tr class="dd-table-foot-row">
+      <tr>
         <td :colspan="tableOptions.columns.length" class="dd-table-foot-column">
           <slot name="foot" :pages="pages" :page="page" :pageChange="pageChange"/>
         </td>
@@ -118,33 +116,3 @@ watch(
     {immediate: true, deep: true}
 )
 </script>
-
-<style lang="postcss">
-.dd-table-parent {
-  @apply overflow-x-auto
-}
-
-.dd-table {
-  @apply table w-full
-}
-
-.dd-table-head {}
-.dd-table-head-row {}
-.dd-table-head-column {}
-
-.dd-table-body {}
-.dd-table-body-row {}
-.dd-table-body-column {}
-
-.dd-table-body-loading {}
-.dd-table-body-loading-column {}
-.dd-table-body-loading-row {}
-
-.dd-table-body-no-data {}
-.dd-table-body-no-data-row {}
-.dd-table-body-no-data-column {}
-
-.dd-table-foot {}
-.dd-table-foot-row {}
-.dd-table-foot-column {}
-</style>

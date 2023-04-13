@@ -1,7 +1,8 @@
 import {wildcardIncludes} from "./wildcard";
 import {comparison} from "./comparison";
-import {paginate, PaginationResult} from "./pagination";
-import {DataTableColumn, DataTableOptions} from "./types";
+import {paginate} from "./pagination";
+import type {PaginationResult} from "./pagination";
+import type {DataTableColumn, DataTableOptions} from "./types";
 
 export const tableSearch = (options: DataTableOptions<any>): any[] => {
     if (!options.enableSearch) {

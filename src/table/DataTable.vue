@@ -3,11 +3,7 @@
     <table class="table w-full" :class="tableOptions.styling?.table">
       <thead :class="tableOptions.styling?.head">
       <tr class="dd-table-head-row">
-        <th v-for="(column, index) in tableOptions.columns"
-            :key="index"
-            class="dd-table-head-column"
-            :class="generateClass('dd-table-head-column', index)"
-            @click="sortColumn(column)">
+        <th v-for="(column, index) in tableOptions.columns" :key="index" class="dd-table-head-column" :class="column?.classes" @click="sortColumn(column)">
           <slot v-if="$slots.hasOwnProperty('column')" name="column" :column="column" :index="index" :pageChange="pageChange"/>
           <template v-else>
             <div v-if="column.sortable" class="flex gap-3 items-center">
@@ -37,9 +33,7 @@
       </tbody>
 
       <tbody v-else :class="tableOptions.styling?.body">
-      <tr v-for="(item, index) in page.data"
-          :key="index"
-          :class="generateClass('dd-table-body-row', index)">
+      <tr v-for="(item, index) in page.data" :key="index" :class="generateClass('dd-table-body-row', index)">
         <td v-for="(column, index) in tableOptions.columns"
             :key="index"
             :class="column.classes">

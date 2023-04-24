@@ -1,6 +1,0 @@
-export * from "./table/comparison"
-export * from "./table/data-table"
-export * from "./table/DataTable.vue"
-export * from "./table/pagination"
-export * from "./table/types"
-export * from "./table/wildcard"

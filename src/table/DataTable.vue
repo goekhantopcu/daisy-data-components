@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import {computed, ref, watch} from "vue";
 import {tablePagination, tableSearch, tableSort} from "./data-table";
-import type {DataTableColumn, DataTableOptions} from "./types";
+import type {DataTableColumn, DataTableOptions} from "./data-table-types";
 
 const props = defineProps<{ options: DataTableOptions<any> }>()
 

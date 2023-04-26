@@ -1,9 +1,9 @@
 {
   "name": "daisy-data-components",
   "private": false,
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "The \"daisy-data-components\" NPM package transforms general UI components from daisyUI into specialized \"data components\", such as Data Tables and Data Date Pickers, optimized for working with data-centric applications. It provides powerful functionality to easily create dynamic and interactive data visualizations and display large datasets in a user-friendly format.",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -30,18 +30,23 @@
     "url": "https://github.com/goekhantopcu/daisy-data-components"
   },
   "dependencies": {
-    "vue": "^3.0.0",
-    "daisyui": "^1.9.0"
+    "@vueuse/core": "^10.1.0",
+    "daisyui": "^1.9.0",
+    "uuid": "^9.0.0",
+    "vue": "^3.0.0"
   },
   "peerDependencies": {
+    "daisyui": "^1.9.0",
     "vue": "^3.0.0",
-    "daisyui": "^1.9.0"
+    "uuid": "^9.0.0",
+    "@vueuse/core": "^10.1.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.0.0",
+    "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
-    "vue-tsc": "^1.2.0",
-    "typescript": "^4.9.3"
+    "tailwindcss": "^3.0.0",
+    "typescript": "^4.9.3",
+    "vue-tsc": "^1.2.0"
   }
 }

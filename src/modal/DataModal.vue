@@ -1,9 +1,13 @@
 <template>
-  <input type="checkbox" :id="id" class="modal-toggle" :checked="false" />
-  <div class="modal modal-middle" :class="styling?.modal">
-    <div class="modal-box" :class="styling?.box">
+  <input type="checkbox"
+         :id="id"
+         class="modal-toggle"
+         :checked="false"
+         :data-disable-outside-scroll="disableOutsideScroll" />
+  <div class="modal modal-middle" :class="wrapperClasses">
+    <div class="modal-box" :class="outerClasses">
       <slot name="content"></slot>
-      <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="styling?.action">
+      <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="actionClasses">
         <slot name="action"></slot>
       </div>
     </div>
@@ -14,22 +18,19 @@
 import {onBeforeUnmount, onMounted} from "vue";
 import DataModalControl from "./data-modal-control";
 
-const props = defineProps<{
+type DataModalProperties = {
   id: string;
-  options?: ModalOptions;
-  styling?: Styling;
-}>();
 
-export type ModalOptions = {
-  closeOnEscape: boolean;
-  closeOnOutside: boolean;
+  closeOnEscape?: boolean;
+  closeOnOutside?: boolean;
+  disableOutsideScroll?: boolean;
+
+  wrapperClasses?: string;
+  outerClasses?: string;
+  actionClasses?: string;
 }
 
-export type Styling = {
-  modal?: string;
-  box?: string;
-  action?: string;
-}
+const props = defineProps<DataModalProperties>();
 
 function closeOnEscape(event: any) {
   if (DataModalControl.isHidden(props.id)) {
@@ -50,19 +51,19 @@ function closeOnOutside(event: any) {
 }
 
 onMounted(() => {
-  if (props.options?.closeOnEscape) {
+  if (props.closeOnEscape) {
     window.addEventListener('keydown', closeOnEscape);
   }
-  if (props.options?.closeOnOutside) {
+  if (props.closeOnOutside) {
     window.addEventListener('click', closeOnOutside);
   }
 });
 
 onBeforeUnmount(() => {
-  if (props.options?.closeOnEscape) {
+  if (props.closeOnEscape) {
     window.removeEventListener('keydown', closeOnEscape);
   }
-  if (props.options?.closeOnOutside) {
+  if (props.closeOnOutside) {
     window.removeEventListener('click', closeOnOutside);
   }
 });

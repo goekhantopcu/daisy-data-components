@@ -1,23 +1,29 @@
 <template>
-  <div class="toast toast-end dd-toast-notification">
-    <div v-for="toast in toasts" :key="toast.id" class="alert" :class="toast.classes">
+  <section class="toast toast-end dd-toast-notification" role="alert">
+    <article v-for="toast in toasts" :key="toast.id" class="alert" :class="toast.classes">
       <div v-if="$slots.hasOwnProperty('content')">
         <slot name="content"
               :toast="toast"
               :toasts="toasts"
               :removeToast="removeToast"
-              :hide="hide"/>
+              :hide="hide"
+              aria-label="Toast-Content"/>
       </div>
-      <span v-else>{{ toast.message }}</span>
-    </div>
-  </div>
+      <p v-else aria-label="Toast-Message">{{ toast.message }}</p>
+    </article>
+  </section>
 </template>
 
 <script setup lang="ts">
 import type {ToastEvent, ToastNotification} from "./toast-types";
-import {useToastBus} from "./index";
-import {onUnmounted, ref} from "vue";
+import {ref} from "vue";
 import {v4} from "uuid";
+import {subscribe} from "../util";
+import {TOAST_EVENT_KEY} from "./toast";
+
+const props = defineProps<{
+  id?: string;
+}>();
 
 const toasts = ref<ToastNotification[]>([]);
 
@@ -29,22 +35,24 @@ function hide(toast: ToastNotification) {
   removeToast(toast);
 }
 
-const unsubscribe = useToastBus().on((event: ToastEvent) => {
+subscribe<ToastEvent>(TOAST_EVENT_KEY, (data: ToastEvent) => {
+  if (data.id !== undefined && props.id !== undefined && props.id !== data.id) {
+    return;
+  }
+
   const id = v4();
   const toast: ToastNotification = {
     id: id,
-    message: event.message,
-    classes: `alert-${event.type ?? 'info'} ${event.styling}`
+    message: data.message,
+    classes: `alert-${data.type ?? 'info'} ${data.styling}`
   };
   toasts.value.push(toast);
-  const timeout = event.duration ?? 3000;
-  if (event.duration === -1) {
+  const timeout = data.duration ?? 3000;
+  if (data.duration === -1) {
     return;
   }
   setTimeout(() => removeToast(toast), timeout);
 });
-
-onUnmounted(unsubscribe);
 </script>
 
 <style scoped></style>

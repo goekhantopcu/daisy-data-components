@@ -1,16 +1,19 @@
 <template>
-  <input type="checkbox"
-         :id="id"
-         class="modal-toggle"
-         :checked="false"
-         :data-disable-outside-scroll="disableOutsideScroll" />
-  <div class="modal modal-middle" :class="wrapperClasses">
-    <div class="modal-box" :class="outerClasses">
-      <slot name="content"></slot>
-      <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="actionClasses">
-        <slot name="action"></slot>
-      </div>
-    </div>
+  <div role="dialog" aria-modal="true">
+    <input type="checkbox"
+           :id="id"
+           class="modal-toggle"
+           :checked="false"
+           :data-disable-outside-scroll="disableOutsideScroll"
+           aria-label="Modal-Trigger"/>
+    <section class="modal modal-middle" :class="wrapperClasses">
+      <article class="modal-box" :class="outerClasses">
+        <slot name="content" aria-label="Modal-Content"></slot>
+        <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="actionClasses">
+          <slot name="action" aria-label="Modal-Actions"></slot>
+        </div>
+      </article>
+    </section>
   </div>
 </template>
 

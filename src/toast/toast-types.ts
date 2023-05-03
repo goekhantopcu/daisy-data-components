@@ -5,6 +5,7 @@ interface ToastNotification {
 }
 
 interface ToastEvent {
+    id?: string;
     message: string;
     type?: 'error' | 'info' | 'success' | 'warning';
     duration?: number;

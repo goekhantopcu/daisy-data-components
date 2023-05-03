@@ -1,14 +1,11 @@
-import type {EventBusKey} from "@vueuse/core";
-import {useEventBus} from "@vueuse/core";
 import type {ToastEvent} from "./toast-types";
+import {publish} from "./eventbus.composable";
 
-const toastNotificationKey: EventBusKey<ToastEvent> = Symbol('toast-key');
+export const TOAST_EVENT_KEY = 'toast-notification';
 
-const useToastBus = () => useEventBus(toastNotificationKey);
-
-const displayToast = (event: ToastEvent) => {
-    const bus = useToastBus();
-    bus.emit(event);
+export function showToast(event: ToastEvent | string) {
+    if (typeof event === 'string') {
+        return publish(TOAST_EVENT_KEY, {message: event});
+    }
+    publish(TOAST_EVENT_KEY, event);
 }
-
-export {useToastBus, displayToast, toastNotificationKey}

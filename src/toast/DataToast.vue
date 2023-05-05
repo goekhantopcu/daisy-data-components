@@ -15,40 +15,37 @@
 </template>
 
 <script setup lang="ts">
-import type {ToastEvent, ToastNotification} from "./toast-types";
+import type {ToastEvent, Toast} from "./toast";
 import {ref} from "vue";
 import {v4} from "uuid";
 import {subscribe} from "../util";
 import {TOAST_EVENT_KEY} from "./toast";
 
-const props = defineProps<{
-  id?: string;
-}>();
+const props = defineProps<{ id?: string; }>();
 
-const toasts = ref<ToastNotification[]>([]);
+const toasts = ref<Toast[]>([]);
 
-function removeToast(data: ToastNotification) {
+function removeToast(data: Toast) {
   toasts.value = toasts.value.filter(toast => toast.id !== data.id);
 }
 
-function hide(toast: ToastNotification) {
+function hide(toast: Toast) {
   removeToast(toast);
 }
 
-subscribe<ToastEvent>(TOAST_EVENT_KEY, (data: ToastEvent) => {
-  if (data.id !== undefined && props.id !== undefined && props.id !== data.id) {
+subscribe<ToastEvent>(TOAST_EVENT_KEY, (event: ToastEvent) => {
+  if (event.id !== undefined && props.id !== undefined && props.id !== event.id) {
     return;
   }
-
   const id = v4();
-  const toast: ToastNotification = {
+  const toast: Toast = {
     id: id,
-    message: data.message,
-    classes: `alert-${data.type ?? 'info'} ${data.styling}`
+    message: event.message,
+    classes: `alert-${event.type ?? 'info'} ${event.styling}`
   };
   toasts.value.push(toast);
-  const timeout = data.duration ?? 3000;
-  if (data.duration === -1) {
+  const timeout = event.duration ?? 3000;
+  if (event.duration === -1) {
     return;
   }
   setTimeout(() => removeToast(toast), timeout);

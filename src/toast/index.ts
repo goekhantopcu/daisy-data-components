@@ -1,6 +1,5 @@
-import ToastNotification from "./ToastNotification.vue";
+import DataToast from "./DataToast.vue";
 
-export * from './toast-types';
-export * from "./ToastNotification.vue";
+export * from "./DataToast.vue";
 export * from './toast';
-export {ToastNotification}
+export {DataToast}

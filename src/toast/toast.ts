@@ -1,5 +1,18 @@
-import type {ToastEvent} from "./toast-types";
-import {publish} from "./eventbus.composable";
+import {publish} from "../util";
+
+export interface Toast {
+    id: string;
+    message: string;
+    classes: string;
+}
+
+export interface ToastEvent {
+    id?: string;
+    message: string;
+    type?: 'error' | 'info' | 'success' | 'warning';
+    duration?: number;
+    styling?: string;
+}
 
 export const TOAST_EVENT_KEY = 'toast-notification';
 

@@ -9,7 +9,7 @@ export interface ModalOptions {
 }
 
 export class Modal {
-    private readonly id: string;
+    readonly id: string;
     readonly options?: ModalOptions;
 
     constructor(id: string, options?: ModalOptions) {

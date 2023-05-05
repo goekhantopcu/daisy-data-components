@@ -1,4 +1,4 @@
-interface PaginationResult<T> {
+export interface PaginationResult<T> {
     data: T[];
     currentPage: number;
     totalItems: number;
@@ -6,7 +6,7 @@ interface PaginationResult<T> {
     totalPages: number;
 }
 
-const paginate = <T>(items: any[], pageSize: number): PaginationResult<T>[] => {
+export function paginate<T>(items: any[], pageSize: number): PaginationResult<T>[] {
     if (pageSize >= items.length || pageSize < 0) {
         pageSize = items.length
     }
@@ -27,6 +27,3 @@ const paginate = <T>(items: any[], pageSize: number): PaginationResult<T>[] => {
     }
     return result;
 }
-
-export { paginate }
-export type { PaginationResult }

@@ -1,4 +1,4 @@
-const comparison = (a: any, b: any): number => {
+export function comparison(a: any, b: any): number {
     let compareResult: number | undefined;
     if (a === b) {
         compareResult = 0
@@ -37,5 +37,3 @@ const comparison = (a: any, b: any): number => {
     }
     return compareResult ?? 0
 }
-
-export { comparison }

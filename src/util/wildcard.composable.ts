@@ -1,4 +1,4 @@
-const wildcardIncludes = (base: string, searchQuery: string) => {
+export function wildcardIncludes(base: string, searchQuery: string): boolean {
     base = base.toLowerCase()
     searchQuery = searchQuery.toLowerCase()
     if (searchQuery === '') {
@@ -18,5 +18,3 @@ const wildcardIncludes = (base: string, searchQuery: string) => {
     }
     return base.includes(searchQuery);
 }
-
-export { wildcardIncludes }

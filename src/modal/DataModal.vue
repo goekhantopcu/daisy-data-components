@@ -4,13 +4,12 @@
            :id="id"
            class="modal-toggle"
            :checked="false"
-           :data-disable-outside-scroll="disableOutsideScroll"
            aria-label="Modal-Trigger"/>
-    <section class="modal modal-middle" :class="wrapperClasses">
-      <article class="modal-box" :class="outerClasses">
-        <slot name="content" aria-label="Modal-Content"></slot>
-        <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="actionClasses">
-          <slot name="action" aria-label="Modal-Actions"></slot>
+    <section class="modal modal-middle" :class="modal.options.wrapperClasses">
+      <article class="modal-box" :class="modal.options.outerClasses">
+        <slot name="content" aria-label="Modal-Content" :modal="modal"></slot>
+        <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="modal.options.actionClasses">
+          <slot name="action" aria-label="Modal-Actions" :modal="modal"></slot>
         </div>
       </article>
     </section>
@@ -19,54 +18,44 @@
 
 <script setup lang="ts">
 import {onBeforeUnmount, onMounted} from "vue";
-import DataModalControl from "./data-modal-control";
+import {useModal} from "./modal";
 
-type DataModalProperties = {
-  id: string;
+const props = defineProps<{id: string}>();
 
-  closeOnEscape?: boolean;
-  closeOnOutside?: boolean;
-  disableOutsideScroll?: boolean;
-
-  wrapperClasses?: string;
-  outerClasses?: string;
-  actionClasses?: string;
-}
-
-const props = defineProps<DataModalProperties>();
+const modal = useModal(props.id);
 
 function closeOnEscape(event: any) {
-  if (DataModalControl.isHidden(props.id)) {
+  if (modal.isHidden()) {
     return;
   }
   if (event.keyCode === 27) {
-    DataModalControl.close(props.id);
+    modal.close();
   }
 }
 
 function closeOnOutside(event: any) {
-  if (DataModalControl.isHidden(props.id)) {
+  if (modal.isHidden()) {
     return;
   }
   if (event.target.classList.contains('modal')) {
-    DataModalControl.close(props.id);
+    modal.close();
   }
 }
 
 onMounted(() => {
-  if (props.closeOnEscape) {
+  if (modal.options?.closeOnEscape) {
     window.addEventListener('keydown', closeOnEscape);
   }
-  if (props.closeOnOutside) {
+  if (modal.options?.closeOnOutside) {
     window.addEventListener('click', closeOnOutside);
   }
 });
 
 onBeforeUnmount(() => {
-  if (props.closeOnEscape) {
+  if (modal.options?.closeOnEscape) {
     window.removeEventListener('keydown', closeOnEscape);
   }
-  if (props.closeOnOutside) {
+  if (modal.options?.closeOnOutside) {
     window.removeEventListener('click', closeOnOutside);
   }
 });

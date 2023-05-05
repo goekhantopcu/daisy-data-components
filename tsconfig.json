@@ -13,6 +13,15 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.tsx", "**/*.vue"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "modal/index.ts",
+    "table/index.ts",
+    "toast/index.ts",
+    "util/index.ts",
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

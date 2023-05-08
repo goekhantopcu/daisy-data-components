@@ -18,8 +18,7 @@
 import type {ToastEvent, Toast} from "./toast";
 import {ref} from "vue";
 import {v4} from "uuid";
-import {subscribe} from "../util";
-import {TOAST_EVENT_KEY} from "./toast";
+import {useEventBus} from "../util";
 
 const props = defineProps<{ id?: string; }>();
 
@@ -33,12 +32,11 @@ function hide(toast: Toast) {
   removeToast(toast);
 }
 
-subscribe<ToastEvent>(TOAST_EVENT_KEY, (event: ToastEvent) => {
+const bus = useEventBus<ToastEvent>('toast-notifications');
+bus.subscribe((event: ToastEvent) => {
   if (event.id !== undefined && event.id !== props.id) {
-    console.log("Rejected Toast-Event: ", event);
     return;
   }
-  console.log("Accepted Toast-Event: ", event);
   const id = v4();
   const toast: Toast = {
     id: id,

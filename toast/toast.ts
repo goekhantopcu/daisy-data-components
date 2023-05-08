@@ -1,4 +1,4 @@
-import {publish} from "../util";
+import {useEventBus} from "../util";
 
 export interface Toast {
     id: string;
@@ -14,11 +14,10 @@ export interface ToastEvent {
     styling?: string;
 }
 
-export const TOAST_EVENT_KEY = 'toast-notification';
-
 export function showToast(event: ToastEvent | string) {
+    const bus = useEventBus<ToastEvent>('toast-notifications');
     if (typeof event === 'string') {
-        return publish(TOAST_EVENT_KEY, {message: event});
+        event = {message: event};
     }
-    publish(TOAST_EVENT_KEY, event);
+    bus.publish(event);
 }

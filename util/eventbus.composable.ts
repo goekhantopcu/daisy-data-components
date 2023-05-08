@@ -3,26 +3,37 @@ import {onMounted, onUnmounted} from "vue";
 
 export type EventCallback<T> = (data: T) => void;
 
-export type EventListener<T> = {
-    id: string;
-    key: string;
-    callback: EventCallback<T>;
+export class EventBus<T> {
+    private readonly key: string;
+    private readonly listeners: Map<string, EventCallback<T>>;
+
+    constructor(key: string) {
+        this.key = key;
+        this.listeners = new Map<string, EventCallback<T>>();
+    }
+
+    public subscribe(callback: EventCallback<T>) {
+        const id = v4();
+        onMounted(() => this.listeners.set(id, callback))
+        onUnmounted(() => this.listeners.delete(id));
+    }
+
+    public publish(data: T) {
+        this.listeners.forEach(value => value(data));
+    }
 }
 
-let listeners: EventListener<any>[] = [];
+const EVENT_BUS_INSTANCES = new Map<string, EventBus<any>>;
 
-export function subscribe<T>(key: string, callback: EventCallback<T>) {
-    const id = v4();
-    onMounted(() => {
-        listeners.push({id: id, key: key, callback: callback});
-        console.log("Subscribed: ", id);
-    })
-    onUnmounted(() => {
-        listeners = listeners.filter(listener => id !== listener.id);
-        console.log("Unsubscribed: ", id);
-    });
-}
-
-export function publish(key: string, data: any) {
-    listeners.filter(listener => listener.key === key).forEach(listener => listener.callback(data));
+export function useEventBus<T>(key?: string): EventBus<T> {
+    if (key === undefined) {
+        return useEventBus('daisy_data_general_event_bus');
+    }
+    const cached = EVENT_BUS_INSTANCES.get(key);
+    if (cached) {
+        return cached;
+    }
+    const bus = new EventBus<T>(key);
+    EVENT_BUS_INSTANCES.set(key, bus);
+    return bus;
 }

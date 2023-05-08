@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import type {ToastEvent, Toast} from "./toast";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {v4} from "uuid";
 import {useEventBus} from "../util";
 
@@ -32,24 +32,25 @@ function hide(toast: Toast) {
   removeToast(toast);
 }
 
-const bus = useEventBus<ToastEvent>('toast-notifications');
-bus.subscribe((event: ToastEvent) => {
-  if (event.id !== undefined && event.id !== props.id) {
-    return;
-  }
-  const id = v4();
-  const toast: Toast = {
-    id: id,
-    message: event.message,
-    classes: `alert-${event.type ?? 'info'} ${event.styling}`
-  };
-  toasts.value.push(toast);
-  const timeout = event.duration ?? 3000;
-  if (event.duration === -1) {
-    return;
-  }
-  setTimeout(() => removeToast(toast), timeout);
-});
+onMounted(() => {
+  useEventBus<ToastEvent>('toast-notifications').subscribe((event: ToastEvent) => {
+    if (event.id !== undefined && event.id !== props.id) {
+      return;
+    }
+    const id = v4();
+    const toast: Toast = {
+      id: id,
+      message: event.message,
+      classes: `alert-${event.type ?? 'info'} ${event.styling}`
+    };
+    toasts.value.push(toast);
+    const timeout = event.duration ?? 3000;
+    if (event.duration === -1) {
+      return;
+    }
+    setTimeout(() => removeToast(toast), timeout);
+  });
+})
 </script>
 
 <style scoped></style>

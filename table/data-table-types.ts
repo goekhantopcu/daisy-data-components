@@ -23,6 +23,7 @@ interface DataTableOptions<T> {
     minSearchQueryLength?: number;
     enablePagination: boolean;
     pageSize?: number;
+    persistentPageSize?: number;
     pageCurrentId?: number;
     loading: boolean;
     styling?: DataTableStyling

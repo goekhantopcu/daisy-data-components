@@ -45,6 +45,13 @@ export const tableSort = (items: any[], column: DataTableColumn<any>): any[] => 
 }
 
 export const tablePagination = <T>(items: any[], options: DataTableOptions<T>): PaginationResult<T>[] => {
+    let pageSize = options.pageSize ?? -1
+    if (options.persistentPageSize) {
+        const rawPageSize = localStorage.getItem('pageSize');
+        if (rawPageSize) {
+            pageSize = parseInt(rawPageSize) ?? -1;
+        }
+    }
     if (!options.enablePagination) {
         return [
             {
@@ -56,5 +63,5 @@ export const tablePagination = <T>(items: any[], options: DataTableOptions<T>): 
             }
         ]
     }
-    return paginate(items, options.pageSize ?? -1)
+    return paginate(items, pageSize)
 }

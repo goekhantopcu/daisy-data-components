@@ -1,5 +1,4 @@
 import {v4} from 'uuid';
-import {onMounted, onUnmounted} from "vue";
 
 export type EventCallback<T> = (data: T) => void;
 
@@ -14,10 +13,14 @@ export class EventBus<T> {
         this.listeners = new Map<string, EventCallback<T>>();
     }
 
-    public subscribe(callback: EventCallback<T>) {
+    public subscribe(callback: EventCallback<T>): string {
         const id = v4();
-        onMounted(() => this.listeners.set(id, callback))
-        onUnmounted(() => this.listeners.delete(id));
+        this.listeners.set(id, callback);
+        return id;
+    }
+
+    public unsubscribe(id: string) {
+        this.listeners.delete(id);
     }
 
     public publish(data: T) {

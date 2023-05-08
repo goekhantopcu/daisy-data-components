@@ -9,8 +9,6 @@ export interface ModalOptions {
 }
 
 export class Modal {
-    static MODAL_INSTANCES = new Map<string, Modal>();
-
     readonly id: string;
     readonly options?: ModalOptions;
 
@@ -64,22 +62,24 @@ export class Modal {
     }
 
     destroy() {
-        Modal.MODAL_INSTANCES.delete(this.id);
+        MODAL_INSTANCES.delete(this.id);
     }
 }
 
+const MODAL_INSTANCES = new Map<string, Modal>();
+
 export function useModal(id: string, options?: ModalOptions): Modal {
-    const cached = Modal.MODAL_INSTANCES.get(id);
+    const cached = MODAL_INSTANCES.get(id);
     if (cached) {
         return cached;
     }
     const modal = new Modal(id, options);
-    Modal.MODAL_INSTANCES.set(id, modal);
+    MODAL_INSTANCES.set(id, modal);
     return modal;
 }
 
 export function destroyModal(id: string) {
-    const cached = Modal.MODAL_INSTANCES.get(id);
+    const cached = MODAL_INSTANCES.get(id);
     if (!cached) {
         return;
     }

@@ -3,8 +3,6 @@ import {v4} from 'uuid';
 export type EventCallback<T> = (data: T) => void;
 
 export class EventBus<T> {
-    static EVENT_BUS_INSTANCES = new Map<string, EventBus<any>>;
-
     private readonly key: string;
     private readonly listeners: Map<string, EventCallback<T>>;
 
@@ -26,17 +24,24 @@ export class EventBus<T> {
     public publish(data: T) {
         this.listeners.forEach(value => value(data));
     }
+
+    public destroy() {
+        this.listeners.clear();
+        EVENT_BUS_INSTANCES.delete(this.key);
+    }
 }
+
+const EVENT_BUS_INSTANCES = new Map<string, EventBus<any>>;
 
 export function useEventBus<T>(key?: string): EventBus<T> {
     if (key === undefined) {
         return useEventBus('daisy_data_general_event_bus');
     }
-    const cached = EventBus.EVENT_BUS_INSTANCES.get(key);
+    const cached = EVENT_BUS_INSTANCES.get(key);
     if (cached) {
         return cached;
     }
     const bus = new EventBus<T>(key);
-    EventBus.EVENT_BUS_INSTANCES.set(key, bus);
+    EVENT_BUS_INSTANCES.set(key, bus);
     return bus;
 }

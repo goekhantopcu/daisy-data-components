@@ -16,7 +16,7 @@
       </tr>
       </thead>
 
-      <tbody v-if="tableOptions.loading" :class="tableOptions.styling?.bodyLoading">
+      <tbody v-if="$slots.hasOwnProperty('loading') && tableOptions.loading" :class="tableOptions.styling?.bodyLoading">
       <tr class="dd-table-body-loading-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-loading-column">
           <slot name="loading"/>
@@ -24,7 +24,7 @@
       </tr>
       </tbody>
 
-      <tbody v-else-if="filteredItems.length === 0" :class="tableOptions.styling?.bodyNoData">
+      <tbody v-else-if="$slots.hasOwnProperty('no-data') && filteredItems.length === 0" :class="tableOptions.styling?.bodyNoData">
       <tr class="dd-table-body-no-data-row">
         <td :colspan="tableOptions.columns.length" class="dd-table-body-no-data-column">
           <slot name="no-data"/>
@@ -37,7 +37,13 @@
         <td v-for="(column, index) in tableOptions.columns"
             :key="index"
             :class="column.classes">
-          <slot :name="column.slot" :item="item" :index="index" :column="column" :pageChange="pageChange" />
+          <slot v-if="$slots.hasOwnProperty(column.slot)"
+                :name="column.slot"
+                :item="item"
+                :index="index"
+                :column="column"
+                :pageChange="pageChange" />
+          <span v-else>{{ column[column.slot] ?? '-' }}</span>
         </td>
       </tr>
       </tbody>

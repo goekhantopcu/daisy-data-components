@@ -13,8 +13,14 @@ let listeners: EventListener<any>[] = [];
 
 export function subscribe<T>(key: string, callback: EventCallback<T>) {
     const id = v4();
-    onMounted(() => listeners.push({id: id, key: key, callback: callback}))
-    onUnmounted(() => listeners = listeners.filter(listener => id !== listener.id));
+    onMounted(() => {
+        listeners.push({id: id, key: key, callback: callback});
+        console.log("Subscribed: ", id);
+    })
+    onUnmounted(() => {
+        listeners = listeners.filter(listener => id !== listener.id);
+        console.log("Unsubscribed: ", id);
+    });
 }
 
 export function publish(key: string, data: any) {

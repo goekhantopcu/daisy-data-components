@@ -34,9 +34,11 @@ function hide(toast: Toast) {
 }
 
 subscribe<ToastEvent>(TOAST_EVENT_KEY, (event: ToastEvent) => {
-  if (event.id !== undefined && props.id !== undefined && props.id !== event.id) {
+  if (event.id !== undefined && event.id !== props.id) {
+    console.log("Rejected Toast-Event: ", event);
     return;
   }
+  console.log("Accepted Toast-Event: ", event);
   const id = v4();
   const toast: Toast = {
     id: id,

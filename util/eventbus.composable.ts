@@ -4,6 +4,8 @@ import {onMounted, onUnmounted} from "vue";
 export type EventCallback<T> = (data: T) => void;
 
 export class EventBus<T> {
+    static EVENT_BUS_INSTANCES = new Map<string, EventBus<any>>;
+
     private readonly key: string;
     private readonly listeners: Map<string, EventCallback<T>>;
 
@@ -23,17 +25,15 @@ export class EventBus<T> {
     }
 }
 
-const EVENT_BUS_INSTANCES = new Map<string, EventBus<any>>;
-
 export function useEventBus<T>(key?: string): EventBus<T> {
     if (key === undefined) {
         return useEventBus('daisy_data_general_event_bus');
     }
-    const cached = EVENT_BUS_INSTANCES.get(key);
+    const cached = EventBus.EVENT_BUS_INSTANCES.get(key);
     if (cached) {
         return cached;
     }
     const bus = new EventBus<T>(key);
-    EVENT_BUS_INSTANCES.set(key, bus);
+    EventBus.EVENT_BUS_INSTANCES.set(key, bus);
     return bus;
 }

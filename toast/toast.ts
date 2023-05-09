@@ -1,4 +1,4 @@
-import {useEventBus} from "../util";
+import {useEventBus} from "../eventbus";
 
 export interface Toast {
     id: string;

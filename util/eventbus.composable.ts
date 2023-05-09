@@ -1,4 +1,5 @@
 import {v4} from 'uuid';
+import {App, inject, InjectionKey} from "vue";
 
 export type EventCallback<T> = (data: T) => void;
 
@@ -38,22 +39,33 @@ export class EventBus<T> {
 }
 
 export const DEFAULT_GENERAL_EVENT_BUS_KEY = 'daisy_data_general_event_bus';
-export const EVENT_BUS_INSTANCES: EventBus<any>[] = [];
+
+export const eventBusInstancesKey: InjectionKey<Map<string, EventBus<any>>> = Symbol('daisyDataComponentsEventBus');
 
 export function useEventBus<T>(key?: string): EventBus<T> {
     if (key === undefined) {
         return useEventBus(DEFAULT_GENERAL_EVENT_BUS_KEY);
     }
-    const cached = EVENT_BUS_INSTANCES.find(value => value.key === key);
+    const instances = inject(eventBusInstancesKey);
+    if (!instances) {
+        throw new Error('There are no instances available');
+    }
+    const cached = instances.get(key);
     if (cached) {
         if (!cached.active) {
             throw new Error('The requested event-bus was disabled');
         }
-        console.log(`Eventbus(action='cached', key='${key}', size='${Array(EVENT_BUS_INSTANCES.keys()).length}')`);
+        console.log(`Eventbus(action='cached', key='${key}', size='${Array(instances.keys()).length}')`);
         return cached;
     }
     const bus = new EventBus<T>(key);
-    console.log(`Eventbus(action='register', key='${key}', size='${Array(EVENT_BUS_INSTANCES.keys()).length}')`);
-    EVENT_BUS_INSTANCES.push(bus);
+    console.log(`Eventbus(action='register', key='${key}', size='${Array(instances.keys()).length}')`);
+    instances.set(key, bus);
     return bus;
+}
+
+export class EventBusPlugin {
+    static install(app: App) {
+        app.provide(eventBusInstancesKey, new Map<string, EventBus<any>>);
+    }
 }

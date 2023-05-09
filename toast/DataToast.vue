@@ -18,7 +18,7 @@
 import type {ToastEvent, Toast} from "./toast";
 import {onMounted, ref} from "vue";
 import {v4} from "uuid";
-import {useEventBus} from "../util";
+import {useEventBus} from "../eventbus";
 
 const props = defineProps<{ id?: string; }>();
 

@@ -1,5 +1,4 @@
-import {v4} from 'uuid';
-import {DaisyDataComponentsPlugin} from "../plugin/plugin";
+import {v4} from "uuid";
 
 export type EventCallback<T> = (data: T) => void;
 
@@ -34,27 +33,6 @@ export class EventBus<T> {
     public destroy() {
         this.active = false;
         this.listeners.clear();
-        DaisyDataComponentsPlugin.EVENT_BUS_INSTANCES.delete(this.key);
         console.log(`Eventbus(action='destroy', key='${this.key}', size='${Array(this.listeners.keys()).length}')`);
     }
-}
-
-export const DEFAULT_GENERAL_EVENT_BUS_KEY = 'daisy_data_general_event_bus';
-
-export function useEventBus<T>(key?: string): EventBus<T> {
-    if (key === undefined) {
-        return useEventBus(DEFAULT_GENERAL_EVENT_BUS_KEY);
-    }
-    const cached = DaisyDataComponentsPlugin.EVENT_BUS_INSTANCES.get(key);
-    if (cached) {
-        if (!cached.active) {
-            throw new Error('The requested event-bus was disabled');
-        }
-        console.log(`Eventbus(action='cached', key='${key}', size='${Array(DaisyDataComponentsPlugin.EVENT_BUS_INSTANCES.keys()).length}')`);
-        return cached;
-    }
-    const bus = new EventBus<T>(key);
-    console.log(`Eventbus(action='register', key='${key}', size='${Array(DaisyDataComponentsPlugin.EVENT_BUS_INSTANCES.keys()).length}')`);
-    DaisyDataComponentsPlugin.EVENT_BUS_INSTANCES.set(key, bus);
-    return bus;
 }

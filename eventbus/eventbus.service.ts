@@ -2,18 +2,8 @@ import {EventBus} from "./eventbus";
 
 export const DEFAULT_GENERAL_EVENT_BUS_KEY = 'daisy_data_general_event_bus';
 
-class EventBusService {
-    private static instance: EventBusService;
+export class EventBusService {
     private instances: Map<string, EventBus<any>> = new Map();
-
-    private constructor() {}
-
-    public static getInstance(): EventBusService {
-        if (!EventBusService.instance) {
-            EventBusService.instance = new EventBusService();
-        }
-        return EventBusService.instance;
-    }
 
     public getEventBus<T>(key?: string): EventBus<T> {
         if (key === undefined) {
@@ -33,5 +23,3 @@ class EventBusService {
         return bus;
     }
 }
-
-export const eventbusService = EventBusService.getInstance();

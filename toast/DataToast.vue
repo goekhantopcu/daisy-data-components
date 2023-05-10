@@ -19,6 +19,7 @@ import type {ToastEvent, Toast} from "./toast";
 import {ref} from "vue";
 import {v4} from "uuid";
 import {useEmitter} from "../emitter";
+import {TOAST_NOTIFICATION_KEY} from "./toast";
 
 const props = defineProps<{ id?: string; }>();
 
@@ -34,7 +35,7 @@ function hide(toast: Toast) {
 
 const emitter = useEmitter();
 
-emitter.subscribe<ToastEvent>('toast-notifications', (event: ToastEvent) => {
+emitter.subscribe<ToastEvent>(TOAST_NOTIFICATION_KEY, (event: ToastEvent) => {
   if (event.id !== undefined && event.id !== props.id) {
     return;
   }

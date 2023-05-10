@@ -1,5 +1,4 @@
 export interface ModalOptions {
-    id: string;
     closeOnEscape?: boolean;
     closeOnOutside?: boolean;
     disableOutsideScroll?: boolean;
@@ -12,32 +11,37 @@ export class Modal {
     constructor(id: string, options?: ModalOptions) {
         this.id = id;
         this.options = options ?? {
-            id: id,
             closeOnEscape: true,
             closeOnOutside: true,
             disableOutsideScroll: true
         };
     }
 
-    open() {
-        this.element.checked = true;
+    public open() {
+        this.changeElement(true);
         this.toggleOutsideScroll();
     }
 
-    close() {
-        this.element.checked = false;
+    public close() {
+        this.changeElement(false);
         this.toggleOutsideScroll();
     }
 
-    isVisible(): boolean {
+    public isVisible(): boolean {
         return this.element.checked;
     }
 
-    isHidden(): boolean {
+    public isHidden(): boolean {
         return !this.element.checked;
     }
 
-    get element(): HTMLInputElement {
+    private changeElement(value: boolean) {
+        this.element.checked = value;
+        const event = new InputEvent('change');
+        this.element.dispatchEvent(event);
+    }
+
+    public get element(): HTMLInputElement {
         const element = document.getElementById(this.id) as HTMLInputElement;
         if (!element) {
             throw new Error(`There is no Modal with id='${this.id}'`);
@@ -58,7 +62,7 @@ export class Modal {
         bodyElement.style.setProperty('overflow', newOverflowProperty);
     }
 
-    destroy() {
+    public destroy() {
         MODAL_INSTANCES.delete(this.id);
     }
 }

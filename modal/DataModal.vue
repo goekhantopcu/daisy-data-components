@@ -4,7 +4,9 @@
            :id="id"
            class="modal-toggle"
            :checked="false"
-           aria-label="Modal-Trigger"/>
+           aria-label="Modal-Trigger"
+           ref="checkbox"
+           @change="trigger($event)" />
     <section class="modal modal-middle" :class="wrapperClasses">
       <article class="modal-box" :class="outerClasses">
         <slot name="content" aria-label="Modal-Content" :modal="modal"></slot>
@@ -17,8 +19,9 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted} from "vue";
+import {onBeforeUnmount, onMounted, onUnmounted, ref} from "vue";
 import {useModal} from "./modal";
+import {useEmitter} from "../emitter";
 
 const props = defineProps<{
   id: string;
@@ -27,7 +30,24 @@ const props = defineProps<{
   actionClasses?: string;
 }>();
 
+const emitter = useEmitter();
 const modal = useModal(props.id);
+const checkbox = ref<HTMLInputElement>();
+const emits = defineEmits(['modal:close', 'modal:open']);
+
+function trigger(event: any) {
+  const target = event.target as HTMLInputElement;
+  if (!target) {
+    return;
+  }
+  if (target.checked) {
+    emits('modal:open', modal);
+    emitter.publish('modal:open', modal);
+  } else {
+    emits('modal:close', modal);
+    emitter.publish('modal:close', modal);
+  }
+}
 
 function closeOnEscape(event: any) {
   if (modal.isHidden()) {
@@ -64,6 +84,8 @@ onBeforeUnmount(() => {
     window.removeEventListener('click', closeOnOutside);
   }
 });
+
+onUnmounted(() => modal.destroy());
 </script>
 
 <style scoped></style>

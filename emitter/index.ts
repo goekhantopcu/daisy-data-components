@@ -11,7 +11,7 @@ export type EventListener<T> = {
     callback: EventListenerCallback<T>;
 }
 
-export class EventEmitter {
+export default class EventEmitter {
     private emitters = new Map<EventEmitterIdentifier, Set<EventListener<any>>>();
 
     private listeners(identifier: EventEmitterIdentifier): Set<EventListener<any>> {

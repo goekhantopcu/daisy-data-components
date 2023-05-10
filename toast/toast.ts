@@ -1,4 +1,4 @@
-import {EventEmitter} from "../emitter";
+import EventEmitter from "../emitter";
 
 export interface Toast {
     id: string;

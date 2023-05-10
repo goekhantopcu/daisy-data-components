@@ -50,7 +50,7 @@
                 :index="index"
                 :column="column"
                 :pageChange="pageChange"/>
-          <span v-else>{{ column[column.slot] ?? '-' }}</span>
+          <span v-else>{{ item[column.slot] ?? '-' }}</span>
         </td>
       </tr>
       </tbody>

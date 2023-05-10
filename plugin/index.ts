@@ -1,4 +1,4 @@
-import {App} from "vue";
+import type {App} from "vue";
 import DataToast from "../toast/DataToast.vue";
 import DataModal from "../modal/DataModal.vue";
 import DataTable from "../table/DataTable.vue";

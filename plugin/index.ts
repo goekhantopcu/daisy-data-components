@@ -1,8 +1,10 @@
 import {App} from "vue";
-import {EventBusService} from "../eventbus";
+import DataToast from "../toast/DataToast.vue";
+import DataModal from "../modal/DataModal.vue";
+import DataTable from "../table/DataTable.vue";
 
-export class DaisyDataComponentsPlugin {
-    static install(app: App) {
-        app.config.globalProperties.$eventService = new EventBusService();
-    }
+export const DaisyDataComponentsPlugin = (app: App) => {
+    app.component('DataToast', DataToast);
+    app.component('DataModal', DataModal);
+    app.component('DataTable', DataTable);
 }

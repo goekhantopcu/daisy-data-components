@@ -1,5 +1,5 @@
 import {v4} from 'uuid';
-import {emitters} from "./internal";
+import {inject} from "vue";
 
 export type EventEmitterIdentifier = string;
 export type EventListenerCallback<P> = (payload: P) => void;
@@ -11,41 +11,48 @@ export type EventListener<T> = {
     callback: EventListenerCallback<T>;
 }
 
-export function useEmitter(key: EventEmitterIdentifier) {
-    let listeners = emitters.get(key);
-    if (!listeners) {
-        listeners = new Set<EventListener<any>>();
-        emitters.set(key, listeners);
+export class EventEmitter {
+    private emitters = new Map<EventEmitterIdentifier, Set<EventListener<any>>>();
+
+    private listeners(identifier: EventEmitterIdentifier): Set<EventListener<any>> {
+        let listeners = this.emitters.get(identifier);
+        if (!listeners) {
+            listeners = new Set<EventListener<any>>();
+            this.emitters.set(identifier, listeners);
+        }
+        return listeners;
     }
 
-    function subscribe<T>(callback: EventListenerCallback<T>): EventListenerId {
+    public subscribe<T>(identifier: EventEmitterIdentifier, callback: EventListenerCallback<T>): EventListenerId {
         const listenerId: EventListenerId = v4();
         const listener: EventListener<T> = {
             listenerId: listenerId,
             callback: callback
         };
-        listeners?.add(listener);
+        this.listeners(identifier).add(listener);
         return listenerId;
     }
 
-    function unsubscribe(listenerId: EventListenerId): boolean {
+    public unsubscribe(identifier: EventEmitterIdentifier, listenerId: EventListenerId): boolean {
         let wasDeleted = false;
-        listeners?.forEach(listener => {
+        let listeners = this.listeners(identifier);
+        listeners.forEach(listener => {
             if (listener.listenerId === listenerId) {
-                wasDeleted = listeners?.delete(listener) ?? false;
+                wasDeleted = listeners.delete(listener) ?? false;
             }
         });
         return wasDeleted;
     }
 
-    function publish(data: any) {
-        listeners?.forEach(listener => listener.callback(data));
+    public publish(identifier: EventEmitterIdentifier, data: any) {
+        this.listeners(identifier)?.forEach(listener => listener.callback(data));
     }
+}
 
-    return {
-        listeners,
-        subscribe,
-        unsubscribe,
-        publish
+export function useEmitter(): EventEmitter {
+    const emitter = inject<EventEmitter>('emitter');
+    if (!emitter) {
+        throw new Error('There is no emitter available, make sure you use the useEmitter function inside the setup scope');
     }
+    return emitter;
 }

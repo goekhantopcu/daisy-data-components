@@ -32,7 +32,9 @@ function hide(toast: Toast) {
   removeToast(toast);
 }
 
-useEmitter('toast-notifications').subscribe<ToastEvent>((event: ToastEvent) => {
+const emitter = useEmitter();
+
+emitter.subscribe<ToastEvent>('toast-notifications', (event: ToastEvent) => {
   if (event.id !== undefined && event.id !== props.id) {
     return;
   }

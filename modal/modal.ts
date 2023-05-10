@@ -3,9 +3,6 @@ export interface ModalOptions {
     closeOnEscape?: boolean;
     closeOnOutside?: boolean;
     disableOutsideScroll?: boolean;
-    wrapperClasses?: string;
-    outerClasses?: string;
-    actionClasses?: string;
 }
 
 export class Modal {

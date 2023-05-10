@@ -5,10 +5,10 @@
            class="modal-toggle"
            :checked="false"
            aria-label="Modal-Trigger"/>
-    <section class="modal modal-middle" :class="modal.options.wrapperClasses">
-      <article class="modal-box" :class="modal.options.outerClasses">
+    <section class="modal modal-middle" :class="wrapperClasses">
+      <article class="modal-box" :class="outerClasses">
         <slot name="content" aria-label="Modal-Content" :modal="modal"></slot>
-        <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="modal.options.actionClasses">
+        <div v-if="$slots.hasOwnProperty('action')" class="modal-action" :class="actionClasses">
           <slot name="action" aria-label="Modal-Actions" :modal="modal"></slot>
         </div>
       </article>
@@ -20,7 +20,12 @@
 import {onBeforeUnmount, onMounted} from "vue";
 import {useModal} from "./modal";
 
-const props = defineProps<{id: string}>();
+const props = defineProps<{
+  id: string;
+  wrapperClasses?: string;
+  outerClasses?: string;
+  actionClasses?: string;
+}>();
 
 const modal = useModal(props.id);
 

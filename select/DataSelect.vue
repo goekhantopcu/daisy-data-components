@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type {DataSelectOption, DataSelectOptions} from "./data-select";
-import {computed, onMounted, useSlots} from "vue";
+import {computed, useSlots, watchEffect} from "vue";
 
 const props = defineProps<{
   id: string;
@@ -57,7 +57,7 @@ function updateModelValue(option: DataSelectOption<any>) {
   emits('update:modelValue', option.value);
 }
 
-onMounted(() => {
+watchEffect(() => {
   if (props.options.length === 0) {
     return;
   }

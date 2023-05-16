@@ -8,7 +8,7 @@
            aria-label="Checkbox - Label">{{ label }}</label>
     <select :id="id"
             class="select select-bordered"
-            :class="selectClasses" @change="updateValue">
+            :class="selectClasses" @change="onSelectChange">
       <option v-for="(option, index) in options"
               :key="index"
               :class="optionClasses"
@@ -20,8 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import type {DataSelectOptions} from "./data-select";
-import {computed, useSlots} from "vue";
+import type {DataSelectOption, DataSelectOptions} from "./data-select";
+import {computed, onMounted, useSlots} from "vue";
 
 const props = defineProps<{
   id: string;
@@ -41,7 +41,7 @@ const slots = useSlots();
 const emits = defineEmits(['update:modelValue']);
 const hasLabel = computed(() => slots.hasOwnProperty('label'));
 
-function updateValue(event: any) {
+function onSelectChange(event: any) {
   const target = event.target as HTMLSelectElement;
   if (!target) {
     return;
@@ -50,9 +50,19 @@ function updateValue(event: any) {
   if (index < 0 || index >= props.options.length) {
     return;
   }
-  const option = props.options[index];
+  updateModelValue(props.options[index]);
+}
+
+function updateModelValue(option: DataSelectOption<any>) {
   emits('update:modelValue', option.value);
 }
+
+onMounted(() => {
+  if (props.options.length === 0) {
+    return;
+  }
+  updateModelValue(props.options[0]);
+});
 </script>
 
 <style scoped>

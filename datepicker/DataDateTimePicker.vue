@@ -3,12 +3,14 @@
     <slot v-if="hasLabel" name="label"></slot>
     <label v-else-if="label !== undefined"
            :for="id"
-           class="label-text cursor-pointer"
+           class="label"
            :class="labelClasses"
-           aria-label="Checkbox - Label">{{ label }}</label>
+           aria-label="Checkbox - Label">
+      <span class="label-text cursor-pointer">{{ label }}</span>
+    </label>
     <input :id="id"
            :name="id"
-           class="input"
+           class="input input-bordered"
            :class="inputClasses"
            type="datetime-local"
            :value="formattedDateValue"

@@ -3,9 +3,11 @@
     <slot v-if="hasLabel" name="label"></slot>
     <label v-else-if="label !== undefined"
            :for="id"
-           class="label-text cursor-pointer"
+           class="label"
            :class="labelClasses"
-           aria-label="Checkbox - Label">{{ label }}</label>
+           aria-label="Checkbox - Label">
+      <span class="label-text cursor-pointer">{{ label }}</span>
+    </label>
     <select :id="id"
             class="select select-bordered"
             :class="selectClasses" @change="onSelectChange">

@@ -47,7 +47,11 @@ function updateValue(event: any) {
     return;
   }
   const index = parseInt(target.value);
-  emits('update:modelValue', props.options[index]);
+  if (index < 0 || index >= props.options.length) {
+    return;
+  }
+  const option = props.options[index];
+  emits('update:modelValue', option.value);
 }
 </script>
 

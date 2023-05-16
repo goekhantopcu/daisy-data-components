@@ -12,7 +12,7 @@
            :class="inputClasses"
            type="datetime-local"
            :value="formattedDateValue"
-           @input="updateValue($event.target.value)"
+           @input="updateValue($event)"
            :min="formattedMinDate"
            :max="formattedMaxDate"
            :disabled="disabled"
@@ -43,8 +43,12 @@ const slots = useSlots();
 const emits = defineEmits(['update:modelValue']);
 const hasLabel = computed(() => slots.hasOwnProperty('label'));
 
-function updateValue(value: string) {
-  const date = new Date(value);
+function updateValue(event: any) {
+  const target = event.target as HTMLInputElement;
+  if (!target) {
+    return;
+  }
+  const date = new Date(target.value);
   emits('update:modelValue', date);
 }
 

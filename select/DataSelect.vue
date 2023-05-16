@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import {DataSelectOptions} from "./data-select";
+import type {DataSelectOptions} from "./data-select";
 import {computed, useSlots} from "vue";
 
 const props = defineProps<{

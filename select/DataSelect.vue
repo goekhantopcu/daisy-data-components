@@ -10,7 +10,7 @@
     </label>
     <select :id="id"
             class="select select-bordered"
-            :class="selectClasses" @change="onSelectChange">
+            :class="selectClasses" v-model="selected" @change="onSelectChange">
       <option v-for="(option, index) in options"
               :key="index"
               :class="optionClasses"
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import type {DataSelectOption, DataSelectOptions} from "./data-select";
-import {computed, useSlots, watchEffect} from "vue";
+import {computed, ref, useSlots, watch, watchEffect} from "vue";
 
 const props = defineProps<{
   id: string;
@@ -40,6 +40,7 @@ const props = defineProps<{
 }>();
 
 const slots = useSlots();
+const selected = ref<number>();
 const emits = defineEmits(['update:modelValue']);
 const hasLabel = computed(() => slots.hasOwnProperty('label'));
 
@@ -65,6 +66,14 @@ watchEffect(() => {
   }
   updateModelValue(props.options[0]);
 });
+
+watch(() => props.modelValue, (value: any) => {
+  const optionIndex = props.options.findIndex(option => option.value === value);
+  if (optionIndex === -1) {
+    return;
+  }
+  selected.value = optionIndex;
+}, {immediate: false, flush: "post"});
 </script>
 
 <style scoped>

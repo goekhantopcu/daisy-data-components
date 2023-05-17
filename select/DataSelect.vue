@@ -10,7 +10,7 @@
     </label>
     <select :id="id"
             class="select select-bordered"
-            :class="selectClasses" v-model="selected" @change="onSelectChange">
+            :class="selectClasses" v-model="selected">
       <option v-for="(option, index) in options"
               :key="index"
               :class="optionClasses"
@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import type {DataSelectOption, DataSelectOptions} from "./data-select";
-import {computed, ref, useSlots, watch, watchEffect} from "vue";
+import type {DataSelectOptions} from "./data-select";
+import {onMounted, ref, useSlots, watch} from "vue";
 
 const props = defineProps<{
   id: string;
@@ -42,38 +42,53 @@ const props = defineProps<{
 const slots = useSlots();
 const selected = ref<number>();
 const emits = defineEmits(['update:modelValue']);
-const hasLabel = computed(() => slots.hasOwnProperty('label'));
+const hasLabel = slots.hasOwnProperty('label');
 
-function onSelectChange(event: any) {
-  const target = event.target as HTMLSelectElement;
-  if (!target) {
-    return;
+watch(() => props.options, (value, oldValue) => {
+  if (oldValue.length === 0 && value.length > 0) {
+    let optionSelected = props.options.find(option => option.selected);
+    if (!optionSelected) {
+      optionSelected = props.options[0];
+    }
+    selected.value = props.options.indexOf(optionSelected);
   }
-  const index = parseInt(target.value);
-  if (index < 0 || index >= props.options.length) {
-    return;
-  }
-  updateModelValue(props.options[index]);
-}
-
-function updateModelValue(option: DataSelectOption<any>) {
-  emits('update:modelValue', option.value);
-}
-
-watchEffect(() => {
-  if (props.options.length === 0) {
-    return;
-  }
-  updateModelValue(props.options[0]);
 });
 
 watch(() => props.modelValue, (value: any) => {
+  if (props.options.length === 0) {
+    return;
+  }
   const optionIndex = props.options.findIndex(option => option.value === value);
   if (optionIndex === -1) {
     return;
   }
   selected.value = optionIndex;
-}, {immediate: false, flush: "post"});
+});
+
+watch(selected, (value: number | undefined) => {
+  if (!value) {
+    return;
+  }
+  if (props.options.length === 0) {
+    return;
+  }
+  if (value < 0 || value >= props.options.length) {
+    return;
+  }
+  const option = props.options[value];
+  emits('update:modelValue', option.value);
+});
+
+onMounted(() => {
+  if (props.options.length === 0) {
+    return;
+  }
+  let optionSelected = props.options.find(option => option.selected);
+  if (!optionSelected) {
+    optionSelected = props.options[0];
+  }
+  selected.value = props.options.indexOf(optionSelected);
+});
 </script>
 
 <style scoped>

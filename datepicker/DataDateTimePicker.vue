@@ -1,6 +1,6 @@
 <template>
   <div class="label cursor-pointer justify-start gap-3" :class="wrapperClasses">
-    <slot v-if="hasLabel" name="label"></slot>
+    <slot v-if="hasLabel"></slot>
     <label v-else-if="label !== undefined"
            :for="id"
            class="label"
@@ -13,8 +13,7 @@
            class="input input-bordered"
            :class="inputClasses"
            type="datetime-local"
-           :value="formattedDateValue"
-           @input="updateValue($event)"
+           v-model="internalModelValue"
            :min="formattedMinDate"
            :max="formattedMaxDate"
            :disabled="disabled"
@@ -25,7 +24,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import {computed, useSlots} from "vue";
+import {computed, ref, useSlots, watch} from "vue";
+import {defineModel} from "../util/component.composable";
 
 const props = defineProps<{
   id: string;
@@ -42,19 +42,13 @@ const props = defineProps<{
 }>();
 
 const slots = useSlots();
+const hasLabel = computed(() => slots.hasOwnProperty('default'));
+
 const emits = defineEmits(['update:modelValue']);
-const hasLabel = computed(() => slots.hasOwnProperty('label'));
+const externalModelValue = defineModel<Date>(props, emits);
+const internalModelValue = ref<string>(externalModelValue.value.toISOString().slice(0, 16));
 
-function updateValue(event: any) {
-  const target = event.target as HTMLInputElement;
-  if (!target) {
-    return;
-  }
-  const date = new Date(target.value);
-  emits('update:modelValue', date);
-}
-
-const formattedDateValue = computed(() => props.modelValue.toISOString().slice(0, 16));
+watch(internalModelValue, value => externalModelValue.value = new Date(value));
 
 const formattedMinDate = computed(() => {
   if (props.minDate) {

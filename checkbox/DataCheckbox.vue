@@ -1,6 +1,6 @@
 <template>
   <div class="label cursor-pointer justify-start gap-3" :class="wrapperClasses">
-    <slot v-if="hasLabel" name="label"></slot>
+    <slot v-if="hasLabel"></slot>
     <label v-else-if="label !== undefined"
            :for="id"
            class="label"
@@ -12,8 +12,8 @@
            type="checkbox"
            class="checkbox"
            :class="inputClasses"
-           v-model="checked"
-           :aria-checked="checked"
+           v-model="modelValue"
+           :aria-checked="modelValue"
            :disabled="disabled"
            :readonly="readonly"
            :aria-disabled="disabled"
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import {computed, useSlots} from "vue";
+import {defineModel} from "../util/component.composable";
 
 const props = defineProps<{
   id: string;
@@ -38,13 +39,10 @@ const props = defineProps<{
 }>();
 
 const slots = useSlots();
-const emits = defineEmits(['update:modelValue']);
-const hasLabel = computed(() => slots.hasOwnProperty('label'));
+const hasLabel = computed(() => slots.hasOwnProperty('default'));
 
-const checked = computed({
-  get: () => props.modelValue,
-  set: (value) => emits('update:modelValue', value)
-});
+const emits = defineEmits(['update:modelValue']);
+const modelValue = defineModel<boolean>(props, emits);
 </script>
 
 <style scoped></style>

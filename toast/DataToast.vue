@@ -2,8 +2,7 @@
   <section class="toast toast-end dd-toast-notification" role="alert">
     <article v-for="toast in toasts" :key="toast.id" class="alert" :class="toast.classes">
       <div v-if="$slots.hasOwnProperty('content')">
-        <slot name="content"
-              :toast="toast"
+        <slot :toast="toast"
               :toasts="toasts"
               :removeToast="removeToast"
               :hide="hide"

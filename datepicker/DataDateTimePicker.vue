@@ -1,11 +1,11 @@
 <template>
-  <div class="label cursor-pointer justify-start gap-3" :class="wrapperClasses">
+  <div class="form-control w-full max-w-xs" :class="wrapperClasses">
     <slot v-if="hasLabel"></slot>
     <label v-else-if="label !== undefined"
            :for="id"
            class="label"
            :class="labelClasses"
-           aria-label="Checkbox - Label">
+           :aria-label="label">
       <span class="label-text cursor-pointer">{{ label }}</span>
     </label>
     <input :id="id"

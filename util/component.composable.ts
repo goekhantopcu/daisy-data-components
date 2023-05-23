@@ -1,4 +1,5 @@
-import {computed, Ref, UnwrapRef} from "vue";
+import {computed} from "vue";
+import type {Ref, UnwrapRef} from "vue";
 
 export function defineModel<T>(props: any, emits: any, name: string = 'modelValue'): Ref<UnwrapRef<T>> {
     if (!props.hasOwnProperty(name)) {
